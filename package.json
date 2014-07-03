@@ -1,0 +1,20 @@
+{
+  "name": "blackjack-practical",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.4.5",
+    "body-parser": "^1.4.3",
+    "morgan": "^1.1.1",
+    "errorhandler": "^1.1.1"
+  },
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-mocha": "~0.4.0",
+    "mocha": "^1.20.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "supertest": "^0.13.0",
+    "grunt-mocha-test": "^0.11.0",
+    "should": "^4.0.4"
+  }
+}
