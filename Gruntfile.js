@@ -7,7 +7,7 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      files: ['Gruntfile.js', 'server.js', 'app/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'server.js', 'app.js', 'app/**/*.js', 'test/**/*.js'],
       options: {
         globals: {
           document: true

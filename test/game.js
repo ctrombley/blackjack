@@ -3,17 +3,17 @@ var sinon   = require('sinon');
 var cards   = require('./mockCards');
 var Card    = require('../app/models/card');
 var Dealer  = require('../app/models/dealer');
-var Hand    = require('../app/models/hand');
+var Game    = require('../app/models/game');
 
 var dealer,
-    hand;
+    game;
 
 beforeEach(function() {
   dealer = new Dealer();
   dealer.deal = sinon.stub();
   nextCards(1, [cards.tenOfSpades]);
   nextCards(2, [cards.tenOfSpades, cards.tenOfSpades]);
-  hand = new Hand(dealer);
+  game = new Game(dealer);
 });
 
 function nextCards(count, cards) {
@@ -26,127 +26,127 @@ function nextCard(card) {
 
 describe('Hand', function() {
 
-  describe('at start of hand', function() {
+  describe('at start of game', function() {
     it('should deal two player cards and two dealer cards', function() {
-      hand.deal();
-      hand.playerCards.should.have.length(2);
-      hand.dealerCards.should.have.length(2);
+      game.deal();
+      game.playerCards.should.have.length(2);
+      game.dealerCards.should.have.length(2);
     });
   });
 
   describe('when player hits', function() {
     it('should deal one player card', function() {
-      hand.hit();
-      hand.playerCards.should.have.length(1);
-      hand.hit();
-      hand.playerCards.should.have.length(2);
+      game.hit();
+      game.playerCards.should.have.length(1);
+      game.hit();
+      game.playerCards.should.have.length(2);
     });
 
     it('should bust the player if over 21', function() {
       nextCard(cards.tenOfSpades);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.twoOfHearts);
-      hand.hit();
-      hand.outcome.should.eql('bust');
+      game.hit();
+      game.outcome.should.eql('bust');
     });
 
     it('should award blackjack to the player if at 21', function() {
       nextCard(cards.sixOfSpades);
-      hand.hit();
+      game.hit();
       nextCard(cards.fiveOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
-      hand.outcome.should.eql('blackjack');
+      game.hit();
+      game.outcome.should.eql('blackjack');
     });
 
     it('should award blackjack to the player if at 21 with an ace', function() {
       nextCard(cards.tenOfSpades);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfClubs);
-      hand.hit();
-      hand.outcome.should.eql('blackjack');
+      game.hit();
+      game.outcome.should.eql('blackjack');
     });
 
     it('should bust the player if over 21 with multiple aces', function() {
       nextCard(cards.aceOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfHearts);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfDiamonds);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.nineOfDiamonds);
-      hand.hit();
-      hand.outcome.should.eql('bust');
+      game.hit();
+      game.outcome.should.eql('bust');
     });
 
     it('should award blackjack to the player if at 21 with multiple aces', function() {
       nextCard(cards.aceOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfHearts);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfDiamonds);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.eightOfDiamonds);
-      hand.hit();
-      hand.outcome.should.eql('blackjack');
+      game.hit();
+      game.outcome.should.eql('blackjack');
     });
 
     it('should award blackjack to the player if at 21 with multiple aces', function() {
       nextCard(cards.aceOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfHearts);
-      hand.hit();
+      game.hit();
       nextCard(cards.aceOfDiamonds);
-      hand.hit();
+      game.hit();
       nextCard(cards.tenOfClubs);
-      hand.hit();
+      game.hit();
       nextCard(cards.eightOfDiamonds);
-      hand.hit();
-      hand.outcome.should.eql('blackjack');
+      game.hit();
+      game.outcome.should.eql('blackjack');
     });
   });
   describe('when player stands', function() {
     it('dealer should hit if under 17', function() {
-      hand.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
-      hand.stand();
-      hand.dealerCards.should.have.length(3);
+      game.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
+      game.stand();
+      game.dealerCards.should.have.length(3);
     });
     it('dealer should stand if at 17', function() {
-      hand.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.dealerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.stand();
-      hand.dealerCards.should.have.length(2);
+      game.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.dealerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.stand();
+      game.dealerCards.should.have.length(2);
     });
     it('should be a win when dealer busts', function() {
-      hand.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
+      game.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
       nextCard(cards.sixOfHearts);
-      hand.stand();
-      hand.outcome.should.eql('win');
+      game.stand();
+      game.outcome.should.eql('win');
     });
     it('should be a loss when dealer scores higher', function() {
-      hand.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
+      game.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
       nextCard(cards.twoOfHearts);
-      hand.stand();
-      hand.outcome.should.eql('loss');
+      game.stand();
+      game.outcome.should.eql('loss');
     });
     it('should be a push when dealer scores equal', function() {
-      hand.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
-      hand.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
+      game.playerCards = [cards.tenOfSpades, cards.sevenOfClubs];
+      game.dealerCards = [cards.tenOfSpades, cards.sixOfClubs];
       nextCard(cards.aceOfHearts);
-      hand.stand();
-      hand.outcome.should.eql('push');
+      game.stand();
+      game.outcome.should.eql('push');
     });
   });
 });

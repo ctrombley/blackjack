@@ -1,24 +1,33 @@
-var express       = require('express');
-var app           = express();
-var bodyParser    = require('body-parser');
-
-var DeckHandler   = require('./app/handlers/DeckHandler');
-
-app.use(bodyParser.json());
-app.use(express.static(__dirname + '/public'));
+var express       = require('express'),
+    app           = express(),
+    bodyParser    = require('body-parser'),
+    session       = require('express-session'),
+    errorhandler  = require('errorhandler'),
+    GameHandler   = require('./app/handlers/gameHandler'),
+    Dealer        = require('./app/models/dealer');
 
 var handlers = {
-  deck: new DeckHandler()
+  game: new GameHandler()
 };
 
-var router = express.Router();
+app.use(bodyParser.json());
+app.use(session({ secret: 'blackjack',
+                  saveUninitialized: true,
+                  resave: true }));
 
-app.get('/deal', handlers.deck.deal);
+app.use(express.static(__dirname + '/public'));
 
-app.use('/app', router);
-
-app.use(function(err, req, res, next) {
-  console .error(err);
+app.use(function(req, res, next) {
+  req.session.dealerState = req.session.dealerState || new Dealer();
+  next();
 });
+
+app.post('/deal',   handlers.game.deal);
+app.post('/hit',    handlers.game.hit);
+app.post('/stand',  handlers.game.stand);
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(errorhandler());
+}
 
 module.exports = app;

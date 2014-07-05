@@ -8,7 +8,7 @@ function Dealer(decksInStack) {
   this.decksInStack = decksInStack || 1;
 
   this.cards = [];
-
+  
   makeStack.apply(this);
   this.shuffle();
 }
@@ -26,9 +26,18 @@ function makeStack() {
   }
 }
 
+Dealer.prototype.loadState = function(state) {
+  this.decksInStack = state.decksInStack;
+  this.cards = state.cards;
+
+  return this;
+};
+
 Dealer.prototype.shuffle = function(times) {
-  var i, j, k;
-  var temp;
+  var i, j, k,
+      temp;
+
+  times = times || 1;
 
   for (i=0; i<times; i++) {
     for (j=0; j < this.cards.length; j++) {

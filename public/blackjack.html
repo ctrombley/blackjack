@@ -6,10 +6,19 @@
     <link rel="stylesheet" type="text/css" href="blackjack.css" />
 </head>
 <body>
-    <div class="card two spade"></div>
-    <div class="card three heart"></div>
-    <div class="card four club"></div>
-    <div class="card ace spade"></div>
-    <div class="card back"></div>
+  <div class="table">
+    <div class="dealer-cards">
+    </div>
+    <div class="player-cards">
+    </div>
+    <div class="buttons">
+      <div class="button deal">Deal</div>
+      <div class="button hit disabled">Hit</div>
+      <div class="button stand disabled">Stand</div>
+    </div>
+    <div class="outcome"></div>
+  </div>
+  <script src="jquery-2.1.1.min.js"></script>
+  <script src="blackjack.js"></script>
 </body>
 </html>

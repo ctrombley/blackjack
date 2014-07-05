@@ -1,22 +1,43 @@
-function Hand(dealer) {
-  this.dealer = dealer;
+function Game(dealer) {
   this.playerCards = [];
   this.dealerCards = [];
   this.outcome = '';
+  this.hideDealerCard = true;
+
+  this.dealer = dealer;
+}
+
+function getValue(card) {
+  switch (card.rank) {
+    case "A":
+      return 11;
+    case "J":
+      return 10;
+    case "Q":
+      return 10;
+    case "K":
+      return 10;
+    default:
+      return parseInt(card.rank, 10);
+  }
 }
 
 function cardTotal() {
   var total,
       aces;
-      
+
+  if (this.length === 0)
+  {
+    return 0;
+  }
+
   total = this.map(function(pc) {
-    return pc.value();
+    return getValue(pc);
   }).reduce(function(pv, cv) {
     return pv + cv;
   });
 
   aces = aceCount.apply(this);
-
   return adjustForAces(total, aces);
 }
 
@@ -37,18 +58,31 @@ function adjustForAces(total, aces) {
   return total;
 }
 
-Hand.prototype.deal = function() {
+Game.prototype.loadState = function(state) {
+  if (!state) {
+    return this;
+  }
+
+  this.playerCards = state.playerCards;
+  this.dealerCards = state.dealerCards;
+  this.outcome = state.outcome;
+  this.hideDealerCard = state.hideDealerCard;
+
+  return this;
+};
+
+Game.prototype.deal = function() {
   var newPlayerCards = this.dealer.deal(2),
-      newDealerCards = this.dealer.deal(2);
+  newDealerCards = this.dealer.deal(2);
 
   this.playerCards = this.playerCards.concat(newPlayerCards);
   this.dealerCards = this.dealerCards.concat(newDealerCards);
 };
 
-Hand.prototype.hit = function() {
+Game.prototype.hit = function() {
   var newPlayerCards = this.dealer.deal(1),
-      playerTotal,
-      aces;
+  playerTotal,
+  aces;
 
   this.playerCards = this.playerCards.concat(newPlayerCards);
   playerTotal = cardTotal.apply(this.playerCards);
@@ -60,10 +94,10 @@ Hand.prototype.hit = function() {
   }
 };
 
-Hand.prototype.stand = function() {
+Game.prototype.stand = function() {
   var newDealerCard,
-      dealerTotal,
-      playerTotal;
+  dealerTotal,
+  playerTotal;
 
   while (cardTotal.apply(this.dealerCards) < 17) {
     newDealerCard = this.dealer.deal(1);
@@ -72,7 +106,7 @@ Hand.prototype.stand = function() {
 
   dealerTotal = cardTotal.apply(this.dealerCards);
   playerTotal = cardTotal.apply(this.playerCards);
-  
+
   if (dealerTotal > 21 || playerTotal > dealerTotal) {
     this.outcome = 'win';
   } else if (playerTotal === dealerTotal) {
@@ -80,6 +114,17 @@ Hand.prototype.stand = function() {
   } else if (playerTotal < dealerTotal) {
     this.outcome = 'loss';
   }
+
+  this.hideDealerCard = false;
 };
 
-module.exports = Hand;
+Game.prototype.status = function() {
+  return {
+    playerCards:  this.playerCards,
+    dealerCards:  this.hideDealerCard ? this.dealerCards.slice(0, 1) : this.dealerCards,
+    hideDealerCard: this.hideDealerCard,
+    outcome: this.outcome
+  };
+};
+
+module.exports = Game;
