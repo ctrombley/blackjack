@@ -6,11 +6,12 @@ function GameHandler() {
 
 function createGame(session) {
   var dealerState = session.dealerState,
+      stats = session.stats,
       dealer,
       game;
 
   dealer = new Dealer().loadState(dealerState);
-  return new Game(dealer);
+  return new Game(dealer, stats);
 }
 
 function continueGame(session) {
@@ -32,6 +33,7 @@ GameHandler.prototype.deal = function(req, res) {
   game = createGame(req.session);
   game.deal(bet);
   req.session.gameState = game;
+  req.session.stats = game.stats;
   res.json(game.status());
 };
 
@@ -42,6 +44,7 @@ GameHandler.prototype.hit = function(req, res) {
   game = continueGame(req.session);
   game.hit();
   req.session.gameState = game;
+  req.session.stats = game.stats;
   res.json(game.status());
 };
 
@@ -52,6 +55,7 @@ GameHandler.prototype.stand = function(req, res) {
   game = continueGame(req.session);
   game.stand();
   req.session.gameState = game;
+  req.session.stats = game.stats;
   res.json(game.status());
 };
 

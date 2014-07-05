@@ -5,6 +5,14 @@
   margin: 0 auto;
 }
 
+.stats {
+  color: #fff;
+  top: 20px;
+  width: 1280px;
+  text-align: center;
+  position: absolute;
+}
+
 .player-cards {
   top: 600px;
   width: 1280px;
@@ -50,7 +58,7 @@
 }
 
 .outcome {
-  top: 50px;
+  top: 930px;
   text-transform: uppercase;
   width: 1280px;
   position: absolute;
@@ -81,42 +89,42 @@
 .club {
   background-position-y: -345px;
 }
-.ace, .rank-A {
+.ace {
   background-position-x: 0px;
 }
-.two, .rank-2 {
+.two {
   background-position-x: -93px;
 }
-.three, .rank-3 {
+.three {
   background-position-x: -186px;
 }
-.four, .rank-4 {
+.four {
   background-position-x: -279px;
 }
-.five, .rank-5 {
+.five {
   background-position-x: -372px;
 }
-.six, .rank-6 {
+.six {
   background-position-x: -465px;
 }
-.seven, .rank-7 {
+.seven {
   background-position-x: -558px;
 }
-.eight, .rank-8 {
+.eight {
   background-position-x: -651px;
 }
-.nine, .rank-9 {
+.nine {
   background-position-x: -744px;
 }
-.ten, .rank-10 {
+.ten {
   background-position-x: -837px;
 }
-.jack, .rank-J {
+.jack {
   background-position-x: -930px;
 }
-.queen, .rank-Q {
+.queen {
   background-position-x: -1023px;
 }
-.king, .rank-K {
+.king {
   background-position-x: -1116px;
 }

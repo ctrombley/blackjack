@@ -3,17 +3,20 @@ var sinon   = require('sinon');
 var cards   = require('./mockCards');
 var Card    = require('../app/models/card');
 var Dealer  = require('../app/models/dealer');
+var Stats   = require('../app/models/stats');
 var Game    = require('../app/models/game');
 
 var dealer,
+    stats,
     game;
 
 beforeEach(function() {
   dealer = new Dealer();
   dealer.deal = sinon.stub();
+  stats = new Stats();
   nextCards(1, [cards.tenOfSpades]);
   nextCards(2, [cards.tenOfSpades, cards.tenOfSpades]);
-  game = new Game(dealer);
+  game = new Game(dealer, stats);
 });
 
 function nextCards(count, cards) {

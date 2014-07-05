@@ -1,38 +1,26 @@
-function Game(dealer) {
+var Card = require('./card');
+
+function Game(dealer, stats) {
   this.playerCards = [];
   this.dealerCards = [];
   this.outcome = '';
   this.hideDealerCard = true;
+  this.bet = 0;
 
   this.dealer = dealer;
-}
-
-function getValue(card) {
-  switch (card.rank) {
-    case "A":
-      return 11;
-    case "J":
-      return 10;
-    case "Q":
-      return 10;
-    case "K":
-      return 10;
-    default:
-      return parseInt(card.rank, 10);
-  }
+  this.stats = stats;
 }
 
 function cardTotal() {
   var total,
       aces;
 
-  if (this.length === 0)
-  {
+  if (this.length === 0) {
     return 0;
   }
 
   total = this.map(function(pc) {
-    return getValue(pc);
+    return pc.value;
   }).reduce(function(pv, cv) {
     return pv + cv;
   });
@@ -67,16 +55,29 @@ Game.prototype.loadState = function(state) {
   this.dealerCards = state.dealerCards;
   this.outcome = state.outcome;
   this.hideDealerCard = state.hideDealerCard;
+  this.bet = state.bet;
 
   return this;
 };
 
-Game.prototype.deal = function() {
+Game.prototype.deal = function(bet) {
+  var playerTotal;
+
+  this.bet = bet;
+  this.stats.credits = this.stats.credits - this.bet;
+
   var newPlayerCards = this.dealer.deal(2),
   newDealerCards = this.dealer.deal(2);
 
   this.playerCards = this.playerCards.concat(newPlayerCards);
   this.dealerCards = this.dealerCards.concat(newDealerCards);
+
+  playerTotal = cardTotal.apply(this.playerCards);
+
+  if (playerTotal === 21) {
+    this.outcome = 'blackjack';
+    this.stats.credits = this.stats.credits + this.bet * 2;
+  }
 };
 
 Game.prototype.hit = function() {
@@ -91,6 +92,7 @@ Game.prototype.hit = function() {
     this.outcome = 'bust';
   } else if (playerTotal === 21) {
     this.outcome = 'blackjack';
+    this.stats.credits = this.stats.credits + this.bet * 2;
   }
 };
 
@@ -109,8 +111,10 @@ Game.prototype.stand = function() {
 
   if (dealerTotal > 21 || playerTotal > dealerTotal) {
     this.outcome = 'win';
+    this.stats.credits = this.stats.credits + this.bet * 2;
   } else if (playerTotal === dealerTotal) {
     this.outcome = 'push';
+    this.stats.credits = this.stats.credits + this.bet;
   } else if (playerTotal < dealerTotal) {
     this.outcome = 'loss';
   }
@@ -123,7 +127,7 @@ Game.prototype.status = function() {
     playerCards:  this.playerCards,
     dealerCards:  this.hideDealerCard ? this.dealerCards.slice(0, 1) : this.dealerCards,
     hideDealerCard: this.hideDealerCard,
-    outcome: this.outcome
+    outcome: this.outcome,
   };
 };
 

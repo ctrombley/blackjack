@@ -6,7 +6,8 @@
     "body-parser": "^1.4.3",
     "morgan": "^1.1.1",
     "errorhandler": "^1.1.1",
-    "express-session": "^1.6.1"
+    "express-session": "^1.6.1",
+    "in-words": "^0.1.0"
   },
   "devDependencies": {
     "grunt": "latest",

@@ -1,13 +1,14 @@
 (function($) {
   var baseUrl = 'http://localhost:3000',
       $playerCards = $('.player-cards'),
-      $dealerCards = $('.dealer-cards');
+      $dealerCards = $('.dealer-cards'),
+      $bet = $('#bet');
 
   $('.buttons').on('click', '.deal', function() {
     if ($(this).hasClass('disabled')) {
       return;
     }
-    deal();
+    deal($bet.val());
   }).on('click', '.hit', function() {
     if ($(this).hasClass('disabled')) {
       return;
@@ -20,24 +21,36 @@
     stand();
   });
 
-  function deal() {
-    $.post(baseUrl + '/deal', function(data) {
+
+  updateStats();
+
+  function deal(bet) {
+    $.post(baseUrl + '/deal', { bet: bet }, function(data) {
+      updateStats();
       draw(data);
-      setButtonState(data.outcome);
-    });
+      setUIState(data.outcome);
+    }, 'json');
   }
 
   function hit() {
     $.post(baseUrl + '/hit', function(data) {
+      updateStats();
       draw(data);
-      setButtonState(data.outcome);
+      setUIState(data.outcome);
     });
   }
 
   function stand() {
     $.post(baseUrl + '/stand', function(data) {
+      updateStats();
       draw(data);
-      setButtonState(data.outcome);
+      setUIState(data.outcome);
+    });
+  }
+
+  function updateStats() {
+    $.get(baseUrl + '/stats', function(data) {
+      $('.credits').text(data.credits);
     });
   }
 
@@ -54,7 +67,7 @@
     $el.text('');
     for (var i=0; i<cards.length; i++) {
       var card = cards[i];
-      $el.append('<div class="card rank-' + card.rank + ' ' + card.suit + '">');
+      $el.append('<div class="card ' + card.rankWord + ' ' + card.suit + '">');
     }
   }
 
@@ -64,6 +77,20 @@
 
   function drawOutcome(outcome) {
     $('.outcome').text(outcome);
+  }
+
+  function setUIState(outcome) {
+    setButtonState(outcome);
+    setBetState(outcome);
+  }
+
+  function setBetState(outcome) {
+    if (outcome === '') {
+      $bet.attr('disabled', 'disabled');
+    }
+    else {
+      $bet.removeAttr('disabled');
+    }
   }
 
   function setButtonState(outcome) {
