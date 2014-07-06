@@ -7,3 +7,6 @@ A simple web-based blackjack game built on node and express.
 
 ## Run the tests
     grunt mochaTest
+
+## license
+MIT
