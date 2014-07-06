@@ -27,6 +27,10 @@ function makeStack() {
 }
 
 Dealer.prototype.loadState = function(state) {
+  if (!state) {
+    return this;
+  }
+
   this.decksInStack = state.decksInStack;
   this.cards = state.cards;
 

@@ -64,7 +64,7 @@ Game.prototype.deal = function(bet) {
   var playerTotal;
 
   this.bet = bet;
-  this.stats.credits = this.stats.credits - this.bet;
+  this.stats.credits -= this.bet;
 
   var newPlayerCards = this.dealer.deal(2),
   newDealerCards = this.dealer.deal(2);
@@ -76,7 +76,7 @@ Game.prototype.deal = function(bet) {
 
   if (playerTotal === 21) {
     this.outcome = 'blackjack';
-    this.stats.credits = this.stats.credits + this.bet * 2;
+    this.stats.win(this.bet);
   }
 };
 
@@ -90,9 +90,10 @@ Game.prototype.hit = function() {
 
   if (playerTotal > 21) {
     this.outcome = 'bust';
+    this.stats.loss();
   } else if (playerTotal === 21) {
     this.outcome = 'blackjack';
-    this.stats.credits = this.stats.credits + this.bet * 2;
+    this.stats.win(this.bet);
   }
 };
 
@@ -111,12 +112,13 @@ Game.prototype.stand = function() {
 
   if (dealerTotal > 21 || playerTotal > dealerTotal) {
     this.outcome = 'win';
-    this.stats.credits = this.stats.credits + this.bet * 2;
+    this.stats.win(this.bet);
   } else if (playerTotal === dealerTotal) {
     this.outcome = 'push';
-    this.stats.credits = this.stats.credits + this.bet;
+    this.stats.push(this.bet);
   } else if (playerTotal < dealerTotal) {
     this.outcome = 'loss';
+    this.stats.loss();
   }
 
   this.hideDealerCard = false;
@@ -124,8 +126,8 @@ Game.prototype.stand = function() {
 
 Game.prototype.status = function() {
   return {
-    playerCards:  this.playerCards,
-    dealerCards:  this.hideDealerCard ? this.dealerCards.slice(0, 1) : this.dealerCards,
+    playerCards: this.playerCards,
+    dealerCards: this.hideDealerCard ? this.dealerCards.slice(0, 1) : this.dealerCards,
     hideDealerCard: this.hideDealerCard,
     outcome: this.outcome,
   };

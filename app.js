@@ -26,6 +26,10 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.get('/', function(req, res){
+  res.sendfile('./public/blackjack.html');
+});
+
 app.post('/deal',   handlers.game.deal);
 app.post('/hit',    handlers.game.hit);
 app.post('/stand',  handlers.game.stand);
