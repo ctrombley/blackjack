@@ -13,7 +13,7 @@ var handlers = {
   stats: new StatsHandler()
 };
 
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'blackjack',
                   saveUninitialized: true,
                   resave: true }));
